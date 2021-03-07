@@ -481,6 +481,9 @@ h3 {
 
 .seccion-informacion {
   padding: 5rem 0;
+  /* .imagen {
+
+	} */
 }
 
 @media (min-width: 768px) {
