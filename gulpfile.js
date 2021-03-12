@@ -5,6 +5,16 @@ const notify = require('gulp-notify');
 const webp = require('gulp-webp');
 const concat = require('gulp-concat');
 
+// Utilidades para CSS
+const autoprefixer = require('autoprefixer');
+const postcss = require('gulp-postcss');
+const cssnano = require('cssnano');
+const sourcemaps = require('gulp-sourcemaps');
+
+// Utilidades para JS
+const terser = require('gulp-terser-js');
+const rename = require('gulp-rename');
+
 // Funcion para compilar SASS
 
 const paths = {
@@ -15,23 +25,20 @@ const paths = {
 
 function css( done ) {
 	return src(paths.scss)
-		.pipe( sass({
-			outputStyle: 'expanded'
-		}) )
-		.pipe( dest('./build/css') )
-}
-
-function minificarcss() {
-	return src(paths.scss)
-		.pipe( sass({
-			outputStyle: 'compressed'
-		}) )
+		.pipe (sourcemaps.init())
+		.pipe( sass() )
+		.pipe( postcss([autoprefixer(), cssnano()]) )
+		.pipe (sourcemaps.write('.'))
 		.pipe( dest('./build/css') )
 }
 
 function javascript() {
 	return src(paths.js)
+	.pipe(sourcemaps.init())
 	.pipe( concat('bundle.js') )
+	.pipe( terser( ) )
+	.pipe( sourcemaps.write('.'))
+	.pipe( rename( { suffix: '.min '}))
 	.pipe( dest('./build/js') )
 }
 
@@ -56,10 +63,9 @@ function watchArchivos() {
 }
 
 exports.css = css;
-exports.minificarcss = minificarcss;
 // exports.javascript = javascript;
 exports.imagenes = imagenes;
-exports.versionWebp = versionWebp;
+// exports.versionWebp = versionWebp;
 exports.watchArchivos = watchArchivos;
 
 exports.default = series( css, javascript, imagenes, versionWebp, watchArchivos );
